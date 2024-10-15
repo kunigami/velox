@@ -415,9 +415,12 @@ VectorPtr VectorFuzzer::fuzz(const TypePtr& type, vector_size_t size) {
   // 20% chance of adding a constant vector.
   if (coinToss(0.2)) {
     vector = fuzzConstant(type, vectorSize);
+  } else if (type->isPrimitiveType()) {
+    vector = fuzzFlatPrimitive(type, vectorSize);
+  } else if (type->isOpaque()) {
+    vector = fuzzFlatOpaque(type, vectorSize);
   } else {
-    vector = type->isPrimitiveType() ? fuzzFlatPrimitive(type, vectorSize)
-                                     : fuzzComplex(type, vectorSize);
+    vector = fuzzComplex(type, vectorSize);
   }
 
   if (vectorSize > size) {
